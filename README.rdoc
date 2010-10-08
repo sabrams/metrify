@@ -2,6 +2,7 @@
 
 Description goes here.
 
+A month is 30 days (not calendar month) or not...
 == Note on Patches/Pull Requests
  
 * Fork the project.

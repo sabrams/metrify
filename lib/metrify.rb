@@ -1,0 +1,105 @@
+require 'yaml'
+require 'singleton'
+
+module Metrify
+  
+  DEFAULT_UNIT = :day 
+  CALC = "calc_"
+  NAME = '_name'
+  
+  class MetrifyInclusionError < StandardError; end
+  class MetrifyMethodMissingError < StandardError; end
+  
+  def self.included(base)
+    raise MetrifyInclusionError, "The base class must be a descendent of active record." unless base.respond_to?(:descends_from_active_record?)
+    base.class_eval do
+      cattr_accessor :metrify_data
+      cattr_accessor :start_date
+      cattr_accessor :end_date
+    end
+    base.send :extend, ClassMethods
+  end
+
+  module ClassMethods
+    #def acts_as_site_stat(file)  
+    def acts_as_site_stat(file = self.name.underscore + '_metrify.yml', test = false)
+      serialize :stat_hash, Hash
+      send :include, InstanceMethods
+      if test
+        self.metrify_data = YAML::load(File.open(file)) 
+      else
+        self.metrify_data = YAML.load_file(File.join(RAILS_ROOT, 'config', file))
+      end
+    end
+  end
+
+  module InstanceMethods
+
+    # #    TIMEFRAMES = %w(day week month)
+    # #    RECORDED_STATS = %w(logins registrations)
+      
+    def metrify_data
+      self.class.metrify_data
+    end
+    
+    def filters
+      metrify_data['filters']['tier_0']
+    end
+    
+    #blog - method_missing for class vs instance
+    def method_missing(method, *args, &block)
+      stat_names.each do |name|
+        if (name + NAME == method.to_s)
+          obj = metrify_data['stats'][name]
+          return obj['display_name'] #if obj && obj['display_name']#references as class method
+          #why did I need respond_to below instead of this?
+        elsif (CALC + name == method.to_s)
+          new_meth = method.to_s[CALC.length,method.to_s.length]
+          raise MetrifyInclusionError, "Base class must implement method: #{new_meth}." if !self.class.respond_to?(new_meth) 
+          return self.class.send(new_meth, *args, &block)
+        elsif (name == method.to_s)
+          return stat_hash[method.to_s]
+        end
+      end
+      super
+    end
+    
+    def stat_names
+      metrify_data['stats'].keys
+    end
+
+    # returns an array of defined stats, each containing an array of values over time
+    def historical_values(end_date, history_length, unit = DEFAULT_UNIT)
+      unit = :day if (1.send(unit) / 1.days) < 1
+      days = 1.send(unit) / 1.days
+      (0..(history_length-1)).map{|i| end_date - i.send(unit)}.reverse.map do |day|
+          find_stats_for(day, days)
+      end
+    end
+    
+    def find_stats_for(end_date, days)
+       s = lookup(end_date, days)
+       s ||= generate(end_date, days)
+    end
+    
+    def lookup(end_date = Time.now.midnight, interval = 1)
+      self.class.find(:first, :conditions => {:finish_date => end_date, :number_of_days => interval})
+    end
+    
+    def generate(end_date = Time.now.midnight, number_of_days = 1)
+      s = self.class.find_or_create_by_finish_date_and_number_of_days(:finish_date => end_date, :number_of_days => number_of_days)
+      self.start_date = end_date - number_of_days.days
+      self.end_date = end_date
+      s.stat_hash = {}
+      stat_names.each do |stat_name|
+               # puts "here we are with #{stat_name}"
+#        raise MetrifyInclusionError, "Base class must implement method: #{stat_name}." unless self.class.respond_to?(stat_name)
+        s.stat_hash[stat_name] = self.send(CALC + stat_name, end_date-number_of_days, end_date) 
+      end
+
+      s.finish_date = end_date
+      s.save
+      s
+    end
+  end
+end

@@ -1,0 +1,43 @@
+stats:
+    element_a_count:
+        display_name: Element A Count
+    element_b_count:
+        display_name: Element B Count
+    element_c_count:
+        display_name: Element C Count
+
+filters:
+    tier_0:
+        platforms: 
+            set: [iphone, blackberry, android, website]
+            description: 'Platforms'
+        activities:
+            set: [login, registration, course_download]
+            description: 'AccelGolf Activites'
+    tier_1:
+        iphone: 
+            set: [iphone_downloads, iphone_logins, iphone_registrations]
+            description: 'Metrics on iPhone Platform'
+        blackberry: 
+            set: [blackberry_downloads, blackberry_logins, blackberry_registrations]
+            description: 'Metrics on Blackberry Platform'
+        android: 
+            set: [android_downloads, android_logins, android_registrations]
+            description: 'Metrics on Android Platform'
+        website:
+            set: [page_views]
+            description: 'Metrics on Android Platform'
+        login: 
+            set: [logins, iphone_logins, android_logins, blackberry_logins]
+            description: 'Metrics on Android Platform'
+        registration:
+            set: [total_registrations, android_registrations, iphone_registrations, blackberry_registrations]
+            description: 'Metrics on Android Platform'
+        course_download:
+            set: [courses_downloaded]
+            description: 'Metrics on Android Platform'
+ #start_date, #end_date
+        # element_b_count:
+        #         query: "302" #start_date, #end_date
+
+        #stat => {base_stat = logins, filters = blackberry }=> blackberry_logins

@@ -1,0 +1,9 @@
+mysql:
+ adapter: mysql
+ encoding: utf8
+ database: metrify_gem_test
+ host: localhost
+ username: root
+ password:
+ timeout: 5000
+ pool: 5

@@ -1,0 +1,41 @@
+<style type="text/css" media="screen">
+  .metrics {width: auto; background: white; color: black; overflow:auto;}
+  .metrics thead td {font-weight:bold;background-color:#ddd;}
+  .metrics thead td a {color:#116;}
+  .metrics table, th, td {border: 1px solid #ccc; border-width:0 1px 1px 0;}
+  .metrics tr:first-child td {border-top-width:1px;}
+  .metrics td:first-child {border-left-width:1px;}
+  .metrics td {padding:5px;}
+</style>
+<h1>Dashboard</h1>
+<% if @unit == "day" %>
+  <%= link_to "Show By Week", :action => "index", :unit=>"week" %>
+<% else %>
+  <%= link_to "Show By Day", :action => "index", :unit=>"day" %>
+<% end %>
+
+<%= link_to "Graph All Stats", :action => "graph_stats", :unit=>@unit %>
+
+<div class="metrics radius">
+<table class = "radius" cellpadding="0" cellspacing="0" >
+  <thead> 
+    <tr>
+      <% sorted_stat_names.each do |s| %>
+        <td>
+          <%= link_to pretty_col_name(s), :action => "graph_stat", :stat_name => s, :unit=>@unit %>
+        </td>
+      <% end %>  
+    </tr>
+  </thead>
+  <tbody>
+    <% @historical_site_stats.each do |stat| %>
+      <tr>
+        <% sorted_stat_names.each do |s| %>
+        <td><%= stat.send(s) %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<br />
