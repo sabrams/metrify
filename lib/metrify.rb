@@ -1,7 +1,7 @@
 require 'yaml'
-require 'singleton'
 
 module Metrify
+
   
   DEFAULT_UNIT = :day 
   CALC = "calc_"
@@ -22,6 +22,7 @@ module Metrify
 
   module ClassMethods
     #def acts_as_site_stat(file)  
+    
     def acts_as_site_stat(file = self.name.underscore + '_metrify.yml', test = false)
       serialize :stat_hash, Hash
       send :include, InstanceMethods
@@ -73,7 +74,7 @@ module Metrify
       unit = :day if (1.send(unit) / 1.days) < 1
       days = 1.send(unit) / 1.days
       (0..(history_length-1)).map{|i| end_date - i.send(unit)}.reverse.map do |day|
-          find_stats_for(day, days)
+        find_stats_for(day, days)
       end
     end
     

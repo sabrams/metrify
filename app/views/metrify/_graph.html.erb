@@ -1,8 +1,7 @@
-<% require_highcharts %>
 <script type="text/javascript" charset="utf-8">
   DashboardBreakdown = Class.create({
     initialize : function(series_data){
-      this.get_chart(series_data);
+     this.get_chart(series_data);
     },
     get_chart : function(data){
       if(this.chart){ return this.chart; }
@@ -28,7 +27,7 @@
       var filters = get_filter_values();
       // var params = $H({names : stat_names || [], filters : filters || []}).toQueryString();
       params = filters;
-      var url = ["/metrics/chart_data.json", params].join('?');
+      var url = ["/<%= @classname %>/chart_data.json", params].join('?');
       new Ajax.Request(url, {onSuccess : function(trans){
         this.chart = null;
         this.get_chart(eval(trans.responseText));
@@ -42,16 +41,16 @@
 <% else %>
   <%= link_to "Show By Day", :action => "graph_stats", :unit=>"day", :stat_names => @stat_names %>
 <% end %>
-<%= link_to "Metrics Home", metrics_path %>
+<%= link_to "Metrics Home", 'index' %>
 <% showDateRangeOptions = "" 
 showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %>
-<div id="stat_chart" style="width:auto;height:400px;background-color:white"></div>
-<% SiteStat.filters.each_pair do |k,v| %>
+<div class="metrify_graph" id="stat_chart"></div>
+<% Dashboard.new.filters.each_pair do |k,v| %>
 <div><br>
   <%= k %>
-  <% v.each do |name| %>
+  <% v['set'].each do |name| %>
     <input type="checkbox" id="<%= 'filters[' + k + '[' + name + ']]' %>" name="<%= 'filters_' + k %>"  onClick="dashboard.create_new_chart();"/><%= name %><br>
-  <% end %>    
+  <% end %>
 <% end %>
 <input type="button" value="Click Here" onUnclick="dashboard.create_new_chart();">
 <!-- this to controller and replace this with ajax also -->
@@ -67,7 +66,7 @@ showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %
     var paramStrings = "";
     var first = true;
     var radioValues = new Array();
-    <% SiteStat.filters.each_pair do |k,v| %>
+    <% Dashboard.new.filters.each_pair do |k,v| %>
       <% v['set'].each do |name| %>
       var param = "<%= 'filters[' + k + '[' + name + ']]' %>";
       var value = document.getElementById(param).value;
@@ -88,7 +87,6 @@ showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %
       first = false;
       <% end %>
     <% end %>
-    // alert(paramStrings);
     return paramStrings;
   }
 
