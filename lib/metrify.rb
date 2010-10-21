@@ -44,7 +44,7 @@ module Metrify
     end
     
     def filters
-      metrify_data['filters']['tier_0']
+      metrify_data['filters']
     end
     
     #blog - method_missing for class vs instance
@@ -65,8 +65,33 @@ module Metrify
       super
     end
     
-    def stat_names
-      metrify_data['stats'].keys
+    def stat_names(my_filters = nil)
+   #   metrify_data['stats'].keys
+          #filters = ['type' => ['numbers', 'letters'], 'furriness' => ['furry', 'not_furry']]
+      if my_filters
+        col_names =  metrify_data['stats'].keys
+        final_col_names =  metrify_data['stats'].keys
+
+        my_filters.each do |filter_type, filter_set|
+          filter_col_names = []
+          filters.keys.each do |filter_type_from_config|
+            if (filter_type_from_config == filter_type)
+              filter_set.each do |filter|
+                filters[filter_type_from_config][filter]['set'].each do |col|
+                  filter_col_names << col
+                end
+              end
+            end
+          end
+          col_names.each do |col|
+              final_col_names.delete(col) if !filter_col_names.include?(col)
+          end
+        end
+        final_col_names
+      else
+        metrify_data['stats'].keys
+      end
+      
     end
 
     # returns an array of defined stats, each containing an array of values over time

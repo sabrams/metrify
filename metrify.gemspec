@@ -18,6 +18,8 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     "README.rdoc",
+     "app/controllers/metrify_controller.rb",
+     "app/helpers/metrify_helper.rb",
      "app/views/metrify/_chart.html.erb",
      "app/views/metrify/_graph.html.erb",
      "lib/metrify.rb",

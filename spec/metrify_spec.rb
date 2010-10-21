@@ -1,4 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'set'
 
 DATE_1 = Date::strptime('20/10/2010', '%d/%m/%Y')
 DATE_2 = Date::strptime('21/10/2010', '%d/%m/%Y')
@@ -20,6 +21,30 @@ class InvalidMetric < ActiveRecord::Base
     end
 
     def element_c_count(start_date, end_date)
+      15
+    end
+    
+    def element_1_count(start_date, end_date)
+      15
+    end
+    
+    def element_2_count(start_date, end_date)
+      15
+    end
+    
+    def element_3_count(start_date, end_date)
+      15
+    end
+    
+    def element_4_count(start_date, end_date)
+      15
+    end
+    
+    def element_cat_count(start_date, end_date)
+      15
+    end
+    
+    def element_dog_count(start_date, end_date)
       15
     end
   end
@@ -79,13 +104,19 @@ describe "Metrify" do
     historical_site_stats[0].element_a_count.should eql 23  
   end
   
-  it "should return top-level filters" do
-    @site_stat.filters.keys.should eql ['platforms', 'activities']
+  it "should return filters with hash of hashes" do
+    @site_stat.filters['type'].keys.to_set.should eql ['numbers', 'letters', 'animals'].to_set
+    @site_stat.filters['type']['numbers']['set'].to_set.should eql ['element_1_count', 'element_2_count', 'element_3_count', 'element_4_count'].to_set
+    @site_stat.filters['furriness'].keys.to_set.should eql ['furry', 'not_furry'].to_set
   end
   
-  it "should return set of next-tier filters and description" do
-    @site_stat.filters['platforms']['set'].should eql ['iphone', 'blackberry', 'android', 'website']
-    @site_stat.filters['platforms']['description'].should eql 'Platforms'
+  it "should return all stat names with no filters" do
+    @site_stat.stat_names.to_set.should eql Set.new ['element_a_count', 'element_b_count', 'element_c_count', 'element_1_count', 'element_2_count', 'element_3_count', 'element_4_count', 'element_cat_count', 'element_dog_count']
+  end
+  
+  it "should honor filters when returning stat names" do
+    filters = {'type' => ['numbers', 'letters'], 'furriness' => ['furry', 'not_furry']}
+    @site_stat.stat_names(filters).to_set.should eql Set.new ['element_a_count', 'element_b_count', 'element_c_count', 'element_1_count', 'element_2_count', 'element_3_count', 'element_4_count']
   end
   
   

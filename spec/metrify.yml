@@ -5,39 +5,34 @@ stats:
         display_name: Element B Count
     element_c_count:
         display_name: Element C Count
-
+    element_1_count:
+        display_name: Element 1 Count
+    element_2_count:
+        display_name: Element 2 Count
+    element_3_count:
+        display_name: Element 3 Count
+    element_4_count:
+        display_name: Element 4 Count
+    element_cat_count:
+        display_name: Cat Count        
+    element_dog_count:
+        display_name: Dog Count
+        
 filters:
-    tier_0:
-        platforms: 
-            set: [iphone, blackberry, android, website]
-            description: 'Platforms'
-        activities:
-            set: [login, registration, course_download]
-            description: 'AccelGolf Activites'
-    tier_1:
-        iphone: 
-            set: [iphone_downloads, iphone_logins, iphone_registrations]
-            description: 'Metrics on iPhone Platform'
-        blackberry: 
-            set: [blackberry_downloads, blackberry_logins, blackberry_registrations]
-            description: 'Metrics on Blackberry Platform'
-        android: 
-            set: [android_downloads, android_logins, android_registrations]
-            description: 'Metrics on Android Platform'
-        website:
-            set: [page_views]
-            description: 'Metrics on Android Platform'
-        login: 
-            set: [logins, iphone_logins, android_logins, blackberry_logins]
-            description: 'Metrics on Android Platform'
-        registration:
-            set: [total_registrations, android_registrations, iphone_registrations, blackberry_registrations]
-            description: 'Metrics on Android Platform'
-        course_download:
-            set: [courses_downloaded]
-            description: 'Metrics on Android Platform'
- #start_date, #end_date
-        # element_b_count:
-        #         query: "302" #start_date, #end_date
-
-        #stat => {base_stat = logins, filters = blackberry }=> blackberry_logins
+    type:
+      numbers: 
+        set: [element_1_count, element_2_count, element_3_count, element_4_count]
+        description: 'Numbers'
+      letters: 
+        set: [element_a_count, element_b_count, element_c_count]
+        description: 'Letts'
+      animals:
+        set: [element_cat_count, element_dog_count]
+        description: 'Animals' 
+    furriness:
+      furry: 
+        set: [element_cat_count, element_dog_count]
+        description: 'Furry'
+      not_furry:
+        set: [element_1_count, element_2_count, element_3_count, element_4_count, element_a_count, element_b_count, element_c_count]
+        description: 'Not Furry'
