@@ -16,9 +16,10 @@ module MetrifyHelper
     end
     stat_over_time
   end
-
+  
   def sorted_stat_names
     #sort alphabetically, begin with finish_date
     @stat_names.sort.sort { |a,b| (a == "finish_date" ? 0 : 1) <=> (b == "finish_date" ? 0 : 1)}
   end
+  
 end

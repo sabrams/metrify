@@ -50,7 +50,7 @@ module MetrifyController
      @stat_names = params[:stat_names] || metrified_class.stat_names
    end
    
-   # chart_data.json?filters[activity[LOGIN]]=false&filters[activity[REGISTRATION]]=false&filters[activity[COURSE_DOWNLOAD]]=false&filters[platform[IPHONE]]=false&filters[platform[BLACKBERRY]]=true&filters[platform[ANDROID]]=true&filters[platform[WEBSITE]]=false]
+   # chart_data.json?filters[type][]=letters&filters[type][]=animals&filters[furriness][]=not_furry
    def chart_data
     @stat_names = metrified_class.stat_names(params[:filters])
     @unit = params[:unit] || unit

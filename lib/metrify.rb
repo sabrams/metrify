@@ -66,8 +66,8 @@ module Metrify
     end
     
     def stat_names(my_filters = nil)
-   #   metrify_data['stats'].keys
-          #filters = ['type' => ['numbers', 'letters'], 'furriness' => ['furry', 'not_furry']]
+      #filters = ['type' => ['numbers', 'letters'], 'furriness' => ['furry', 'not_furry']]
+          puts "ITS #{my_filters.to_yaml}"
       if my_filters
         col_names =  metrify_data['stats'].keys
         final_col_names =  metrify_data['stats'].keys
@@ -77,6 +77,7 @@ module Metrify
           filters.keys.each do |filter_type_from_config|
             if (filter_type_from_config == filter_type)
               filter_set.each do |filter|
+                puts "THE FILTER IS #{filter.to_yaml}"
                 filters[filter_type_from_config][filter]['set'].each do |col|
                   filter_col_names << col
                 end

@@ -45,11 +45,11 @@
 <% showDateRangeOptions = "" 
 showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %>
 <div class="metrify_graph" id="stat_chart"></div>
-<% Dashboard.new.filters.each_pair do |k,v| %>
-<div><br>
-  <%= k %>
-  <% v['set'].each do |name| %>
-    <input type="checkbox" id="<%= 'filters[' + k + '[' + name + ']]' %>" name="<%= 'filters_' + k %>"  onClick="dashboard.create_new_chart();"/><%= name %><br>
+<% dashboard = Dashboard.new %>
+<% dashboard.filters.each_pair do |filter, subfilters| %>
+<div><br><%= filter %>
+  <% subfilters.each_pair do |subfilter, attributes| %>
+    <input type="checkbox" id="<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>" name="<%= subfilter.to_s %>"  onClick="dashboard.create_new_chart();"/><%= subfilter.to_s %><br>
   <% end %>
 <% end %>
 <input type="button" value="Click Here" onUnclick="dashboard.create_new_chart();">
@@ -63,28 +63,19 @@ showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %
 
   function get_filter_values()
   {
-    var paramStrings = "";
-    var first = true;
-    var radioValues = new Array();
-    <% Dashboard.new.filters.each_pair do |k,v| %>
-      <% v['set'].each do |name| %>
-      var param = "<%= 'filters[' + k + '[' + name + ']]' %>";
-      var value = document.getElementById(param).value;
-      if (!first) {
-        paramStrings = paramStrings + "&";
-      }
-      // if (value != null && value != '') {
-      //         paramStrings = paramStrings + param;
-      //       }
-      
-      if (value != null && value != '') {
-                    paramStrings = paramStrings + param + "=" + true;
-                  }
-                  else {
-                    paramStrings = paramStrings + param + "=" + false;
-                  }
-      
-      first = false;
+    var paramStrings = ""; 
+    <% dashboard.filters.each_pair do |filter, subfilters| %>
+      <% subfilters.each_pair do |subfilter, attributes| %>
+        var param = "<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>";
+        e = document.getElementById(param);
+        var value = e.value;
+        var k = e.name;
+        if (value != null && value != '') {
+          if (paramStrings != "") {
+            paramStrings = paramStrings + '&';
+          }
+          paramStrings = paramStrings + 'filters[<%= filter.to_s %>][]=' + k;
+        }
       <% end %>
     <% end %>
     return paramStrings;
