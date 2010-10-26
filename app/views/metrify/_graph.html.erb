@@ -1,5 +1,5 @@
 <script type="text/javascript" charset="utf-8">
-  DashboardBreakdown = Class.create({
+  Breakdown = Class.create({
     initialize : function(series_data){
      this.get_chart(series_data);
     },
@@ -45,11 +45,10 @@
 <% showDateRangeOptions = "" 
 showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %>
 <div class="metrify_graph" id="stat_chart"></div>
-<% dashboard = Dashboard.new %>
-<% dashboard.filters.each_pair do |filter, subfilters| %>
+<% @metrify.filters.each_pair do |filter, subfilters| %>
 <div><br><%= filter %>
   <% subfilters.each_pair do |subfilter, attributes| %>
-    <input type="checkbox" id="<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>" name="<%= subfilter.to_s %>"  onClick="dashboard.create_new_chart();"/><%= subfilter.to_s %><br>
+    <input type="checkbox" id="<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>" name="<%= subfilter.to_s %>"  onClick="breakdown.create_new_chart();"/><%= subfilter.to_s %><br>
   <% end %>
 <% end %>
 <input type="button" value="Click Here" onUnclick="dashboard.create_new_chart();">
@@ -59,12 +58,12 @@ showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %
                                   :pointInterval => (1.send(@unit) * 1000), 
                                   :pointStart => (@number_of_stats.send(@unit).ago.to_i * 1000), 
                                   :data => get_stat_arr(s)}}.to_json %>;
-  window.dashboard = new DashboardBreakdown(data);
+  window.breakdown = new Breakdown(data);
 
   function get_filter_values()
   {
     var paramStrings = ""; 
-    <% dashboard.filters.each_pair do |filter, subfilters| %>
+    <% @metrify.filters.each_pair do |filter, subfilters| %>
       <% subfilters.each_pair do |subfilter, attributes| %>
         var param = "<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>";
         e = document.getElementById(param);

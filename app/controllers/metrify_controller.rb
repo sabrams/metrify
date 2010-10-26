@@ -18,7 +18,7 @@ module MetrifyController
      @number_of_stats = number_of_stats
      @historical_site_stats = metrified_class.historical_values(Time.now.beginning_of_week, number_of_stats, unit)
    end
-
+   
    def number_of_stats
      unit == :week ? 52 : 30
    end
@@ -29,9 +29,8 @@ module MetrifyController
 
    def graph_stat
 
-     setup_historical_stats
-     set_classname
-
+     prepare_for_graph
+     
      @stat_over_time = []
 
      @stat_names = params[:stat_name]
@@ -45,8 +44,8 @@ module MetrifyController
    end
 
    def graph_stats
-     setup_historical_stats
-     set_classname
+     prepare_for_graph
+
      @stat_names = params[:stat_names] || metrified_class.stat_names
    end
    
@@ -72,7 +71,17 @@ module MetrifyController
           :data => @template.get_stat_arr(s, @historical_site_stats)}}.to_json
           }
     end
+    
    end
+   
+   private
+   
+   def prepare_for_graph
+     @metrify = metrified_class
+     setup_historical_stats
+     set_classname
+   end
+   
   end
 
  
