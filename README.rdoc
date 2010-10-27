@@ -1,8 +1,114 @@
 = metrify
 
-Description goes here.
+Via the creation of a YAML file specifying statistics to track, and an extension class to specify the way to find those statistics, Metrify provides an easy way to aggregate and display statistics over time. 
 
-A month is 30 days (not calendar month) or not...
+If Highcharts is used in your project, functionality is included to immediately use a default chart.
+
+Install metrify:
+  
+  $ gem install metrify
+  
+To add the ability for a class to generate aggregated statistics over time, perform the following steps:
+
+1. Create .yml file defining metrics, and optional metric grouping filters
+2. Include module functionality in class that will calculate metrics, and provide a method for each metric to be calulated.
+
+You can create multiple classes that use this module. By default, the YML file loaded for the class will be on /config/<classname>_metrify.yml. Otherwise, specify the filename as an argument when calling "acts_as_metrify" within the class (shown below). RAILS_ROOT will be prepended. 
+
+Example YML file:
+
+  stats:
+      element_a_count:
+          display_name: Element A Count
+      element_b_count:
+          display_name: Element B Count
+      element_1_count:
+          display_name: Element 1 Count
+      element_cat_count:
+          display_name: Cat Count        
+      element_dog_count:
+          display_name: Dog Count
+
+  filters:
+      type:
+        numbers: 
+          set: [element_1_count]
+          description: 'Numbers'
+        letters: 
+          set: [element_a_count, element_b_count]
+          description: 'Letts'
+        animals:
+          set: [element_cat_count, element_dog_count]
+          description: 'Animals' 
+      furriness:
+        furry: 
+          set: [element_cat_count, element_dog_count]
+          description: 'Furry'
+        not_furry:
+          set: [element_1_count, element_a_count, element_b_count, element_c_count]
+          description: 'Not Furry'
+
+
+Example Class, implementing calculation methods for metrics defined in YML file:
+
+  class MetricsClass < ActiveRecord::Base
+    include Metrify
+    acts_as_metrify 
+
+    class << self
+      def element_a_count(start_date, end_date)
+        # Code calculating number (probably a SQL query using start and end dates) 
+      end
+
+      ...(more methods, one for each defined metric)
+
+    end
+  end
+  
+== Using with Highcharts for instant views
+
+Assuming your application is configured to use Highcharts, optional controller, view, and helper components are included to provide charts with filters. To use:
+
+1. Include MetrifyController module in controller and implement 'metrified_class' and 'set_classname'.
+2. Include partials (graph and/or chart) in views
+
+Example Controller:
+
+  class DashboardController < ApplicationController
+    include MetrifyController
+
+    private 
+    def metrified_class
+      @metrified_class || @metrified_class = MetricsClass.new
+    end 
+
+    def set_classname
+      @classname || @classname = Dashboard.name.downcase
+    end
+
+  end
+  
+Example View for graph:
+
+  <style type="text/css" media="screen">
+    .metrify_graph {width:auto;height:400px;background-color:white}
+
+  </style>
+  <%= render :partial => "metrify/graph" %>
+  
+Example View for chart:
+
+  <style type="text/css" media="screen">
+    .metrify_chart {width: auto; background: white; color: black; overflow:auto;}
+    .metrify_chart thead td {font-weight:bold;background-color:#ddd;}
+    .metrify_chart thead td a {color:#116;}
+    .metrify_chart table, th, td {border: 1px solid #ccc; border-width:0 1px 1px 0;}
+    .metrify_chart tr:first-child td {border-top-width:1px;}
+    .metrify_chart td:first-child {border-left-width:1px;}
+    .metrify_chart td {padding:5px;}
+  </style>
+  <%= render :partial => "metrify/chart" %>
+
 == Note on Patches/Pull Requests
  
 * Fork the project.

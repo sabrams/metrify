@@ -21,13 +21,13 @@ module Metrify
   end
 
   module ClassMethods
-    #def acts_as_site_stat(file)  
+    #def acts_as_metrify(file)  
     
-    def acts_as_site_stat(file = self.name.underscore + '_metrify.yml', test = false)
+    def acts_as_metrify(file = self.name.underscore + '_metrify.yml', test = false)
       serialize :stat_hash, Hash
       send :include, InstanceMethods
       if test
-        self.metrify_data = YAML::load(File.open(file)) 
+        self.metrify_data = YAML::load_file(File.join(RAILS_ROOT, file)) 
       else
         self.metrify_data = YAML.load_file(File.join(RAILS_ROOT, 'config', file))
       end

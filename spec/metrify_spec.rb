@@ -11,7 +11,7 @@ RANGE_2 = 10
 #Abstract, really
 class InvalidMetric < ActiveRecord::Base
   include Metrify
-  acts_as_site_stat 'spec/metrify.yml', true
+  acts_as_metrify 'spec/metrify.yml', true
 
   class << self
     def element_a_count(start_date, end_date)
