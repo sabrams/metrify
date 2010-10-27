@@ -1,6 +1,6 @@
 = metrify
 
-Via the creation of a YAML file specifying statistics to track, and an extension class to specify the way to find those statistics, Metrify provides an easy way to aggregate and display statistics over time. 
+Via the creation of a YAML file specifying statistics to track, and an extension class to specify the way to find those statistics, Metrify provides an easy way to aggregate and display statistics over time. The minimal unit of aggregation is 1 day.
 
 If Highcharts is used in your project, functionality is included to immediately use a default chart.
 
@@ -64,6 +64,28 @@ Example Class, implementing calculation methods for metrics defined in YML file:
 
     end
   end
+  
+The class will need the minimal columns defined in this example migration:
+
+  create_table :metrics_class, :force => true do |t|
+    t.date :finish_date
+    t.integer :number_of_days
+    t.string :stat_hash
+  end
+  
+This will grant the following functionality to the MetricsClass defined above:
+
+  @site_stat.element_a_count_name # => "Element A Count"
+
+  example_finish_date = Date::strptime('20/10/2010', '%d/%m/%Y')
+  number_of_days = 7
+  historical_values = @metrics_class_instance.historical_values(example_finish_date, 10, :day) # => returns array of 10 aggregations, each over 1 day, older values listed first, ended at the most recent aggregation date (example_finish_date). (:day, :month options)
+  historical_values[0].element_a_count # => generated for the given time frame using the 'element_a_count' method implemented in MetricsClass
+  
+  @metrics_class_instance.stat_names # => stat names available, provided in YML file
+
+  filters = {'type' => ['numbers', 'letters'], 'furriness' => ['furry', 'not_furry']}
+  @metrics_class_instance.stat_names(filters) # => return only stat names available from filters
   
 == Using with Highcharts for instant views
 
