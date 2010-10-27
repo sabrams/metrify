@@ -34,9 +34,6 @@ module MetrifyController
      @stat_over_time = []
 
      @stat_names = params[:stat_name]
-     # @historical_site_stats.each do |s|
-     #   @stat_over_time << s.send(@stat_name)
-     # end
 
      respond_to do |format|
        format.html {render 'dashboards/graph_stats'}

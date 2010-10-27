@@ -21,7 +21,6 @@ module Metrify
   end
 
   module ClassMethods
-    #def acts_as_metrify(file)  
     
     def acts_as_metrify(file = self.name.underscore + '_metrify.yml', test = false)
       serialize :stat_hash, Hash
@@ -35,9 +34,6 @@ module Metrify
   end
 
   module InstanceMethods
-
-    # #    TIMEFRAMES = %w(day week month)
-    # #    RECORDED_STATS = %w(logins registrations)
       
     def metrify_data
       self.class.metrify_data
@@ -47,13 +43,11 @@ module Metrify
       metrify_data['filters']
     end
     
-    #blog - method_missing for class vs instance
     def method_missing(method, *args, &block)
       stat_names.each do |name|
         if (name + NAME == method.to_s)
           obj = metrify_data['stats'][name]
-          return obj['display_name'] #if obj && obj['display_name']#references as class method
-          #why did I need respond_to below instead of this?
+          return obj['display_name']
         elsif (CALC + name == method.to_s)
           new_meth = method.to_s[CALC.length,method.to_s.length]
           raise MetrifyInclusionError, "Base class must implement method: #{new_meth}." if !self.class.respond_to?(new_meth) 
@@ -67,7 +61,6 @@ module Metrify
     
     def stat_names(my_filters = nil)
       #filters = ['type' => ['numbers', 'letters'], 'furriness' => ['furry', 'not_furry']]
-          puts "ITS #{my_filters.to_yaml}"
       if my_filters
         col_names =  metrify_data['stats'].keys
         final_col_names =  metrify_data['stats'].keys
@@ -77,7 +70,6 @@ module Metrify
           filters.keys.each do |filter_type_from_config|
             if (filter_type_from_config == filter_type)
               filter_set.each do |filter|
-                puts "THE FILTER IS #{filter.to_yaml}"
                 filters[filter_type_from_config][filter]['set'].each do |col|
                   filter_col_names << col
                 end
@@ -119,7 +111,6 @@ module Metrify
       self.end_date = end_date
       s.stat_hash = {}
       stat_names.each do |stat_name|
-               # puts "here we are with #{stat_name}"
 #        raise MetrifyInclusionError, "Base class must implement method: #{stat_name}." unless self.class.respond_to?(stat_name)
         s.stat_hash[stat_name] = self.send(CALC + stat_name, end_date-number_of_days, end_date) 
       end

@@ -74,7 +74,6 @@ describe "Metrify" do
   #     lambda{@site_stat.historical_values(DATE_1, 1, :day)}.should raise_error(Metrify::MetrifyInclusionError)
   #   end
 
-#   TODO?
   it "should present a stat default display name when not specified in config" do
     @site_stat.element_c_count_name.should eql "Element C Count"
   end
@@ -118,20 +117,5 @@ describe "Metrify" do
     filters = {'type' => ['numbers', 'letters'], 'furriness' => ['furry', 'not_furry']}
     @site_stat.stat_names(filters).to_set.should eql Set.new ['element_a_count', 'element_b_count', 'element_c_count', 'element_1_count', 'element_2_count', 'element_3_count', 'element_4_count']
   end
-  
-  
-  it "should return an object with stats for a designated date and range" do
-    
-    #@site_stat.find_stats_for(DATE_1, RANGE_1)
-    #@site_stat.
-    # def find_stats_for(end_date, days)
-    #    s = lookup(end_date, days)
-    #    s ||= generate(end_date, days)
-    # end
-  end
-  
-  # it "should return the evaluation of the class method for a stat value method" do
-  #     @site_stat.element_a_count.should eql 293
-  #   end
   
 end
