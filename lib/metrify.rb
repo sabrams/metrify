@@ -26,7 +26,7 @@ module Metrify
       serialize :stat_hash, Hash
       send :include, InstanceMethods
       if test
-        self.metrify_data = YAML::load_file(File.join(RAILS_ROOT, file)) 
+        self.metrify_data = YAML::load_file(file) 
       else
         self.metrify_data = YAML.load_file(File.join(RAILS_ROOT, 'config', file))
       end
@@ -112,7 +112,7 @@ module Metrify
       s.stat_hash = {}
       stat_names.each do |stat_name|
 #        raise MetrifyInclusionError, "Base class must implement method: #{stat_name}." unless self.class.respond_to?(stat_name)
-        s.stat_hash[stat_name] = self.send(CALC + stat_name, end_date-number_of_days, end_date) 
+        s.stat_hash[stat_name] = self.send(CALC + stat_name, end_date-number_of_days.days, end_date) 
       end
 
       s.finish_date = end_date

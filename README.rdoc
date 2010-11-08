@@ -8,6 +8,10 @@ Install metrify:
   
   $ gem install metrify
   
+In your environment.rb file, add to Rails::Initializer.run do |config| block:
+
+  config.gem "metrify"
+  
 To add the ability for a class to generate aggregated statistics over time, perform the following steps:
 
 1. Create .yml file defining metrics, and optional metric grouping filters

@@ -36,7 +36,7 @@ module MetrifyController
      @stat_names = params[:stat_name]
 
      respond_to do |format|
-       format.html {render 'dashboards/graph_stats'}
+       format.html {render 'graph_stats'}
      end
    end
 

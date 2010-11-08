@@ -15,8 +15,8 @@ class InvalidMetric < ActiveRecord::Base
 
   class << self
     def element_a_count(start_date, end_date)
-      return 204 if (start_date == (DATE_1-1) && end_date == DATE_1)
-      return 23 if (start_date == (DATE_1-7) && end_date == DATE_1)
+      return 204 if (start_date == (DATE_1-1.day) && end_date == DATE_1)
+      return 23 if (start_date == (DATE_1-7.days) && end_date == DATE_1)
       5 
     end
 
