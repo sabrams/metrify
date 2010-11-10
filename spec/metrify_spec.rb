@@ -61,7 +61,7 @@ end
 describe "Metrify" do
   
   before(:each) do
-        
+  
     @site_stat = Metric.new
   end  
     

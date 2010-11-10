@@ -1,18 +1,15 @@
-<% if @unit == "day" %>
-  <%= link_to "Show By Week", :action => "index", :unit=>"week" %>
-<% else %>
-  <%= link_to "Show By Day", :action => "index", :unit=>"day" %>
-<% end %>
+<%= render :partial => 'metrify/time_links', :locals => {:unit => @unit, :action => 'index'} %>
 
 <%= link_to "Graph All Stats", :action => "graph_stats", :unit=>@unit %>
-
+<%= prev_site_stat = {} %>
 <div class="metrify_chart">
 <table cellpadding="0" cellspacing="0" >
   <thead> 
     <tr>
+      <td>Finish Date</td>
       <% sorted_stat_names.each do |s| %>
         <td>
-          <%= link_to pretty_col_name(s), :action => "graph_stat", :stat_name => s, :unit=>@unit %>
+          <%= link_to pretty_col_name(s, @metrify), :action => "graph_stat", :stat_name => s, :unit=>@unit %>
         </td>
       <% end %>  
     </tr>
@@ -20,8 +17,10 @@
   <tbody>
     <% @historical_site_stats.each do |stat| %>
       <tr>
+        <td><%= stat.finish_date %></td>
         <% sorted_stat_names.each do |s| %>
-        <td><%= stat.send(s) %></td>
+          <% idx = @historical_site_stats.index(stat); last = @historical_site_stats.last == stat %>
+        <td><%= print_stat_value(stat, s, last ? nil : @historical_site_stats[idx+1]) %></td>
         <% end %>
       </tr>
     <% end %>

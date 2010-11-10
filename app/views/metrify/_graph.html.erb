@@ -36,11 +36,7 @@
   });
 </script>
 
-<% if @unit == "day" %>
-  <%= link_to "Show By Week", :action => "graph_stats", :unit=>"week", :stat_names => @stat_names %>
-<% else %>
-  <%= link_to "Show By Day", :action => "graph_stats", :unit=>"day", :stat_names => @stat_names %>
-<% end %>
+<%= render :partial => 'metrify/time_links', :locals => {:unit => @unit, :action => 'graph_stats'} %>
 <%= link_to "Metrics Home", 'index' %>
 <% showDateRangeOptions = "" 
 showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %>
@@ -54,7 +50,7 @@ showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %
 <input type="button" value="Click Here" onUnclick="dashboard.create_new_chart();">
 <!-- this to controller and replace this with ajax also -->
 <script type="text/javascript" charset="utf-8"> 
-  var data = <%= @stat_names.map{|s| {:name => pretty_col_name(s), 
+  var data = <%= @stat_names.map{|s| {:name => pretty_col_name(s, @metrify), 
                                   :pointInterval => (1.send(@unit) * 1000), 
                                   :pointStart => (@number_of_stats.send(@unit).ago.to_i * 1000), 
                                   :data => get_stat_arr(s)}}.to_json %>;
@@ -76,6 +72,9 @@ showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %
           paramStrings = paramStrings + 'filters[<%= filter.to_s %>][]=' + k;
         }
       <% end %>
+    <% end %>
+    <% if @unit %>
+      paramStrings = paramStrings + '&unit=<%= @unit %>';
     <% end %>
     return paramStrings;
   }
