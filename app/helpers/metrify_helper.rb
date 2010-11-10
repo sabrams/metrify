@@ -24,9 +24,15 @@ module MetrifyHelper
     @stat_names.sort.sort { |a,b| (a == "finish_date" ? 0 : 1) <=> (b == "finish_date" ? 0 : 1)}
   end
   
-  def print_stat_value(stat, s, previous_stat = nil)
-    str = stat.send(s).to_s
-    str += colorized_percent_diff(previous_stat.send(s).to_f, stat.send(s).to_f) if @show_variance && previous_stat && previous_stat.send(s) != 0 && stat.send(s) != 0 && previous_stat.send(s) != stat.send(s)
+  def print_stat_value(stat, stat_name,  metrify, previous_stat = nil)
+    val = stat.send(stat_name)
+    val = number_with_precision(val, :precision => metrify.value_precision(stat_name)) if (metrify.value_precision(stat_name))
+    if metrify.value_type(stat_name) == "currency"
+      str = number_to_currency(val) 
+    else
+      str = val.to_s
+    end   
+    str += colorized_percent_diff(previous_stat.send(stat_name).to_f, stat.send(stat_name).to_f) if metrify.show_variance(stat_name) && previous_stat && previous_stat.send(stat_name) != 0 && stat.send(stat_name) != 0 && previous_stat.send(stat_name) != stat.send(stat_name)
     str
   end
   
@@ -34,7 +40,7 @@ module MetrifyHelper
     val = percent_diff(prev, cur)
     str = "<span class="
     str += val >= 0 ? "stat_increase" : "stat_decrease"
-    str += "> (" + number_to_percentage(val, :precision => 2)  + ")</p>"
+    str += "> (" + number_to_percentage(val, :precision => 2)  + ")</span>"
   end
   
   def percent_diff(prev, cur)

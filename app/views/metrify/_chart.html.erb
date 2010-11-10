@@ -20,7 +20,7 @@
         <td><%= stat.finish_date %></td>
         <% sorted_stat_names.each do |s| %>
           <% idx = @historical_site_stats.index(stat); last = @historical_site_stats.last == stat %>
-        <td><%= print_stat_value(stat, s, last ? nil : @historical_site_stats[idx+1]) %></td>
+        <td><%= print_stat_value(stat, s, @metrify, last ? nil : @historical_site_stats[idx+1]) %></td>
         <% end %>
       </tr>
     <% end %>

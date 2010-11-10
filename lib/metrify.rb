@@ -43,6 +43,21 @@ module Metrify
       metrify_data['filters']
     end
     
+    # currency
+    def value_type(stat_name)
+      metrify_data['stats'][stat_name]['value_type']
+    end
+    
+    # int
+    def value_precision(stat_name)
+      metrify_data['stats'][stat_name]['precision']
+    end
+    
+    # if stat should also have % +/- over previous time period
+    def show_variance(stat_name)
+      metrify_data['stats'][stat_name]['show_variance']
+    end    
+    
     def method_missing(method, *args, &block)
       stat_names.each do |name|
         if (name + NAME == method.to_s)

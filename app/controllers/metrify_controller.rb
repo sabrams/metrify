@@ -9,7 +9,6 @@ module MetrifyController
   module InstanceMethods
    def index
      @metrify = metrified_class
-     @show_variance = true #TODO: make configurable
      setup_historical_stats
      @stat_names = metrified_class.stat_names
      @historical_site_stats.reverse!
