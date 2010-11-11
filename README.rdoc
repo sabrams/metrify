@@ -24,6 +24,9 @@ Example YML file:
   stats:
       element_a_count:
           display_name: Element A Count
+          value_type: currency
+          precision: 2
+          show_variance: true
       element_b_count:
           display_name: Element B Count
       element_1_count:
@@ -79,7 +82,7 @@ The class will need the minimal columns defined in this example migration:
   
 This will grant the following functionality to the MetricsClass defined above:
 
-  @site_stat.element_a_count_name # => "Element A Count"
+  @metrics_class_instance.element_a_count_name # => "Element A Count"
 
   example_finish_date = Date::strptime('20/10/2010', '%d/%m/%Y')
   number_of_days = 7
@@ -91,12 +94,17 @@ This will grant the following functionality to the MetricsClass defined above:
   filters = {'type' => ['numbers', 'letters'], 'furriness' => ['furry', 'not_furry']}
   @metrics_class_instance.stat_names(filters) # => return only stat names available from filters
   
+  @metrics_class_instance.value_type('element_a_count')  # => currency - returns type of value (currently only currency). This is useful for knowing how to display
+  @metrics_class_instance.show_variance('element_a_count')   # => true - whether or not this value's % +/- change over last time period should be displayed
+  @metrics_class_instance.value_precision('element_a_count') # if specified in YML file, will round floats using provided precision
+  
 == Using with Highcharts for instant views
 
 Assuming your application is configured to use Highcharts, optional controller, view, and helper components are included to provide charts with filters. To use:
 
 1. Include MetrifyController module in controller and implement 'metrified_class' and 'set_classname'.
 2. Include partials (graph and/or chart) in views
+3. Include route in routes.rb as such (where controller for 'metrified' model is dashboard): map.dashboard '/dashboard/:action.:format', :controller => 'dashboard', :action => 'index'
 
 Example Controller:
 
