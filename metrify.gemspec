@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{metrify}
-  s.version = "0.2.1"
+  s.version = "0.2.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Stephen Abrams"]
-  s.date = %q{2010-11-10}
+  s.date = %q{2010-11-11}
   s.description = %q{Framework to aggregate and display data over time. Assumes highcharts installation.}
   s.email = %q{abrams.stephen@gmail.com}
   s.extra_rdoc_files = [
