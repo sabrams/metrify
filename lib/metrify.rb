@@ -74,6 +74,24 @@ module Metrify
       super
     end
     
+    def preferred_stat_order
+      metrify_data['stat_order']
+    end
+    
+    def sort_stat_names(stat_names)
+      puts "ERWKL:JHFDLKJHDFLKDSJ #{stat_names.to_yaml}"
+      if preferred_stat_order
+        final_list = []
+        preferred_stat_order.each do |o_stat|
+          final_list << o_stat if stat_names.include?(o_stat)
+        end
+        final_list
+      else
+        #sort alphabetically
+        stat_names.sort
+      end
+    end
+    
     def stat_names(my_filters = nil)
       #filters = ['type' => ['numbers', 'letters'], 'furriness' => ['furry', 'not_furry']]
       if my_filters

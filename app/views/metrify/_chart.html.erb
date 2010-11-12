@@ -7,7 +7,7 @@
   <thead> 
     <tr>
       <td>Finish Date</td>
-      <% sorted_stat_names.each do |s| %>
+      <% sorted_stat_names(@metrify).each do |s| %>
         <td>
           <%= link_to pretty_col_name(s, @metrify), :action => "graph_stats", :stat_names => s, :unit=>@unit %>
         </td>
@@ -18,7 +18,7 @@
     <% @historical_site_stats.each do |stat| %>
       <tr>
         <td><%= stat.finish_date %></td>
-        <% sorted_stat_names.each do |s| %>
+        <% sorted_stat_names(@metrify).each do |s| %>
           <% idx = @historical_site_stats.index(stat); last = @historical_site_stats.last == stat %>
         <td><%= print_stat_value(stat, s, @metrify, last ? nil : @historical_site_stats[idx+1]) %></td>
         <% end %>
