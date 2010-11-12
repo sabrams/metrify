@@ -36,7 +36,7 @@
   });
 </script>
 
-<%= render :partial => 'metrify/time_links', :locals => {:unit => @unit, :action => 'graph_stats'} %>
+<%= render :partial => 'metrify/time_links', :locals => {:unit => @unit, :action => 'graph_stats', :stat_names => @stat_names} %>
 <%= link_to "Metrics Home", 'index' %>
 <% showDateRangeOptions = "" 
 showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %>

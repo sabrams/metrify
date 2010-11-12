@@ -1,4 +1,4 @@
-<%= render :partial => 'metrify/time_links', :locals => {:unit => @unit, :action => 'index'} %>
+<%= render :partial => 'metrify/time_links', :locals => {:unit => @unit, :action => 'index', :stat_names => []} %>
 
 <%= link_to "Graph All Stats", :action => "graph_stats", :unit=>@unit %>
 <%= prev_site_stat = {} %>
@@ -9,7 +9,7 @@
       <td>Finish Date</td>
       <% sorted_stat_names.each do |s| %>
         <td>
-          <%= link_to pretty_col_name(s, @metrify), :action => "graph_stat", :stat_name => s, :unit=>@unit %>
+          <%= link_to pretty_col_name(s, @metrify), :action => "graph_stats", :stat_names => s, :unit=>@unit %>
         </td>
       <% end %>  
     </tr>

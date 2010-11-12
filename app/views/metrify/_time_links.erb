@@ -1,9 +1,9 @@
-<% if unit != "month" %>
-  <%= link_to "Show By Month", :action => "#{action}", :unit=>"month" %>
+<% if unit.to_s != "month" %>
+  <%= link_to "Show By Month", :action => "#{action}", :unit=>"month", :stat_names => stat_names %>
 <% end %>
 <% if unit.to_s != "week" %>
-  <%= link_to "Show By Week", :action => "#{action}", :unit=>"week" %>
+  <%= link_to "Show By Week", :action => "#{action}", :unit=>"week", :stat_names => stat_names %>
 <% end %>
-<% if unit != "day" %>
-  <%= link_to "Show By Day", :action => "#{action}", :unit=>"day" %>
+<% if unit.to_s != "day" %>
+  <%= link_to "Show By Day", :action => "#{action}", :unit=>"day", :stat_names => stat_names %>
 <% end %>

@@ -28,19 +28,6 @@ module MetrifyController
      params[:unit] || :week
    end
 
-   def graph_stat
-
-     prepare_for_graph
-     
-     @stat_over_time = []
-
-     @stat_names = params[:stat_name]
-
-     respond_to do |format|
-       format.html {render 'graph_stats'}
-     end
-   end
-
    def graph_stats
      prepare_for_graph
 
