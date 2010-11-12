@@ -36,6 +36,8 @@ Example YML file:
       element_dog_count:
           display_name: Dog Count
 
+  stat_order: [element_a_count, element_b_count, element_1_count,  element_dog_count, element_cat_count] 
+
   filters:
       type:
         numbers: 
@@ -97,7 +99,7 @@ This will grant the following functionality to the MetricsClass defined above:
   @metrics_class_instance.value_type('element_a_count')  # => currency - returns type of value (currently only currency). This is useful for knowing how to display
   @metrics_class_instance.show_variance('element_a_count')   # => true - whether or not this value's % +/- change over last time period should be displayed
   @metrics_class_instance.value_precision('element_a_count') # if specified in YML file, will round floats using provided precision
-  
+  @metrics_class_instance.sort_stat_names(['element_dog_count', 'element_cat_count', 'element_b_count']) # => ['element_b_count', 'element_dog_count', 'element_cat_count'] ordered as defined by stat_order in yml, alphabetical if not configured
 == Using with Highcharts for instant views
 
 Assuming your application is configured to use Highcharts, optional controller, view, and helper components are included to provide charts with filters. To use:
