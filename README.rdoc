@@ -17,7 +17,7 @@ To add the ability for a class to generate aggregated statistics over time, perf
 1. Create .yml file defining metrics, and optional metric grouping filters
 2. Include module functionality in class that will calculate metrics, and provide a method for each metric to be calulated.
 
-You can create multiple classes that use this module. By default, the YML file loaded for the class will be on /config/<classname>_metrify.yml. Otherwise, specify the filename as an argument when calling "acts_as_metrify" within the class (shown below). RAILS_ROOT will be prepended. 
+You can create multiple classes that use this module. By default, the YML file loaded for the class will be on /config/(classname)_metrify.yml. Otherwise, specify the filename as an argument when calling "acts_as_metrify" within the class (shown below). RAILS_ROOT will be prepended. 
 
 Example YML file:
 
