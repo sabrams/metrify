@@ -31,13 +31,17 @@ module MetrifyController
    def graph_stats
      prepare_for_graph
 
-     @stat_names = params[:stat_names] || metrified_class.stat_names
+     @stat_names = parsed_stat_names
    end
+   
+   def parsed_stat_names
+     !params[:stat_names].blank? ? params[:stat_names].split(',') : metrified_class.stat_names
+  end
    
    # chart_data.json?filters[type][]=letters&filters[type][]=animals&filters[furriness][]=not_furry
    def chart_data
     @metrify = metrified_class
-    @stat_names = metrified_class.stat_names(params[:filters])
+    @stat_names = metrified_class.stat_names(parsed_stat_names, params[:filters])
     @unit = params[:unit] || unit
 
     @number_of_stats = params[:number_of_stats] || number_of_stats

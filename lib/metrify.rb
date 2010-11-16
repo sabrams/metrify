@@ -91,30 +91,29 @@ module Metrify
       end
     end
     
-    def stat_names(my_filters = nil)
+    def stat_names(names = nil, my_filters = nil)
       #filters = ['type' => ['numbers', 'letters'], 'furriness' => ['furry', 'not_furry']]
       if my_filters
-        col_names =  metrify_data['stats'].keys
-        final_col_names =  metrify_data['stats'].keys
-
-        my_filters.each do |filter_type, filter_set|
+        col_names = names || metrify_data['stats'].keys
+        final_col_names = col_names.clone
+        my_filters.each do |filter_type, filter_subtypes|
           filter_col_names = []
           filters.keys.each do |filter_type_from_config|
             if (filter_type_from_config == filter_type)
-              filter_set.each do |filter|
-                filters[filter_type_from_config][filter]['set'].each do |col|
+              filter_subtypes.each do |subtype|
+                filters[filter_type_from_config][subtype]['set'].each do |col|
                   filter_col_names << col
                 end
               end
             end
           end
-          col_names.each do |col|
-              final_col_names.delete(col) if !filter_col_names.include?(col)
+          col_names.each do |ycol|
+              final_col_names.delete(ycol.to_s) if !filter_col_names.include?(ycol) 
           end
         end
         final_col_names
       else
-        metrify_data['stats'].keys
+        names || metrify_data['stats'].keys
       end
       
     end

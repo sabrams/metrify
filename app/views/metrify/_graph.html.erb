@@ -1,69 +1,68 @@
 <script type="text/javascript" charset="utf-8">
   Breakdown = function(ajax_fn){
-    var ajax_fn = ajax_fn;
-    var data = <%= @stat_names.map{|s| {:name => pretty_col_name(s, @metrify), 
-                                      :pointInterval => (1.send(@unit) * 1000), 
-                                      :pointStart => (@number_of_stats.send(@unit).ago.to_i * 1000), 
-                                      :data => get_stat_arr(s)}}.to_json %>;
-                               
-    function get_chart(data){
-      if(this.chart){ return this.chart; }
-      this.chart = new Highcharts.Chart({
-  	    chart: {
-  	      renderTo: "stat_chart"
-        },
-        title: {
-          text: "All Stats"
-        },
-        xAxis: {
-         type: "datetime" 
-        },
-        yAxis: {
-          title: {
-            text: "Value"
-          }
-        },
-        series: data
-      });
-    }
-    
-    function get_filter_values(){
-      var paramStrings = ""; 
-      <% @metrify.filters.each_pair do |filter, subfilters| %>
-        <% subfilters.each_pair do |subfilter, attributes| %>
-          var param = "<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>";
-          e = document.getElementById(param);
-          var value = e.value;
-          var k = e.name;
-          if (value != null && value != '') {
-            if (paramStrings != "") {
-              paramStrings = paramStrings + '&';
-            }
-            paramStrings = paramStrings + 'filters[<%= filter.to_s %>][]=' + k;
-          }
-        <% end %>
-      <% end %>
-      <% if @unit %>
-        paramStrings = paramStrings + '&unit=<%= @unit %>';
-      <% end %>
-      return paramStrings;
-    }
-      
+    var ajax_fn = ajax_fn;                             
+
     return {
+      get_chart : function(data){
+        this.chart = new Highcharts.Chart({
+    	    chart: {
+    	      renderTo: "stat_chart",
+    	      zoomType : 'x'
+          },
+          title: {
+            text: "All Stats"
+          },
+          xAxis: {
+           type: "datetime",
+           title : {
+             text : 'Date'
+           }
+          },
+          yAxis: {
+            title: {
+              text: "Value"
+            }
+          },
+          series: data
+        });
+      },
+      get_filter_values : function(){
+        var paramStrings = ""; 
+        <% @metrify.filters.each_pair do |filter, subfilters| %>
+          <% subfilters.each_pair do |subfilter, attributes| %>
+            var param = "<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>";
+            e = document.getElementById(param);
+            var value = e.value;
+            var k = e.name;
+            if (value != null && value != '') {
+              if (paramStrings != "") {
+                paramStrings = paramStrings + '&';
+              }
+              paramStrings = paramStrings + 'filters[<%= filter.to_s %>][]=' + k;
+            }
+          <% end %>
+        <% end %>
+        <% if @unit %>
+          paramStrings = paramStrings + '&unit=<%= @unit %>';
+        <% end %>
+        <% if @stat_names %>
+          paramStrings = paramStrings + '&stat_names=<%= (@stat_names || []).join(",") %>'
+        <% end %>
+        return paramStrings;
+      },
       create_new_chart : function(){  
-        var filters = get_filter_values();
+        var filters = this.get_filter_values();
         params = filters;
         var url = "/<%= @classname %>/chart_data.json?" + params;
         var self = this;
-        ajax_fn.apply(this, url, function(response_text){
+        ajax_fn.apply(this, [url, function(response_text){
           self.chart = null;
-          self.get_chart(eval(trans.responseText));
-        });
+          self.get_chart(eval(response_text));
+        }]);
       }
     };
-  });
+  };
 </script>
-
 <%= render :partial => 'metrify/time_links', :locals => {:unit => @unit, :action => 'graph_stats', :stat_names => @stat_names} %>
 <%= link_to "Metrics Home", 'index' %>
 <% showDateRangeOptions = "" 
