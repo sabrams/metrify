@@ -1,9 +1,12 @@
 <script type="text/javascript" charset="utf-8">
-  Breakdown = Class.create({
-    initialize : function(series_data){
-     this.get_chart(series_data);
-    },
-    get_chart : function(data){
+  Breakdown = function(ajax_fn){
+    var ajax_fn = ajax_fn;
+    var data = <%= @stat_names.map{|s| {:name => pretty_col_name(s, @metrify), 
+                                      :pointInterval => (1.send(@unit) * 1000), 
+                                      :pointStart => (@number_of_stats.send(@unit).ago.to_i * 1000), 
+                                      :data => get_stat_arr(s)}}.to_json %>;
+                               
+    function get_chart(data){
       if(this.chart){ return this.chart; }
       this.chart = new Highcharts.Chart({
   	    chart: {
@@ -22,17 +25,42 @@
         },
         series: data
       });
-    },
-    create_new_chart : function(stat_names){  
-      var filters = get_filter_values();
-      // var params = $H({names : stat_names || [], filters : filters || []}).toQueryString();
-      params = filters;
-      var url = ["/<%= @classname %>/chart_data.json", params].join('?');
-      new Ajax.Request(url, {onSuccess : function(trans){
-        this.chart = null;
-        this.get_chart(eval(trans.responseText));
-      }.bind(this)})
     }
+    
+    function get_filter_values(){
+      var paramStrings = ""; 
+      <% @metrify.filters.each_pair do |filter, subfilters| %>
+        <% subfilters.each_pair do |subfilter, attributes| %>
+          var param = "<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>";
+          e = document.getElementById(param);
+          var value = e.value;
+          var k = e.name;
+          if (value != null && value != '') {
+            if (paramStrings != "") {
+              paramStrings = paramStrings + '&';
+            }
+            paramStrings = paramStrings + 'filters[<%= filter.to_s %>][]=' + k;
+          }
+        <% end %>
+      <% end %>
+      <% if @unit %>
+        paramStrings = paramStrings + '&unit=<%= @unit %>';
+      <% end %>
+      return paramStrings;
+    }
+      
+    return {
+      create_new_chart : function(){  
+        var filters = get_filter_values();
+        params = filters;
+        var url = "/<%= @classname %>/chart_data.json?" + params;
+        var self = this;
+        ajax_fn.apply(this, url, function(response_text){
+          self.chart = null;
+          self.get_chart(eval(trans.responseText));
+        });
+      }
+    };
   });
 </script>
 
@@ -47,36 +75,4 @@ showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %
     <input type="checkbox" id="<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>" name="<%= subfilter.to_s %>"  onClick="breakdown.create_new_chart();"/><%= subfilter.to_s %><br>
   <% end %>
 <% end %>
-<input type="button" value="Click Here" onUnclick="dashboard.create_new_chart();">
-<!-- this to controller and replace this with ajax also -->
-<script type="text/javascript" charset="utf-8"> 
-  var data = <%= @stat_names.map{|s| {:name => pretty_col_name(s, @metrify), 
-                                  :pointInterval => (1.send(@unit) * 1000), 
-                                  :pointStart => (@number_of_stats.send(@unit).ago.to_i * 1000), 
-                                  :data => get_stat_arr(s)}}.to_json %>;
-  window.breakdown = new Breakdown(data);
-
-  function get_filter_values()
-  {
-    var paramStrings = ""; 
-    <% @metrify.filters.each_pair do |filter, subfilters| %>
-      <% subfilters.each_pair do |subfilter, attributes| %>
-        var param = "<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>";
-        e = document.getElementById(param);
-        var value = e.value;
-        var k = e.name;
-        if (value != null && value != '') {
-          if (paramStrings != "") {
-            paramStrings = paramStrings + '&';
-          }
-          paramStrings = paramStrings + 'filters[<%= filter.to_s %>][]=' + k;
-        }
-      <% end %>
-    <% end %>
-    <% if @unit %>
-      paramStrings = paramStrings + '&unit=<%= @unit %>';
-    <% end %>
-    return paramStrings;
-  }
-
-</script>
+<input type="button" value="Click Here" onUnclick="breakdown.create_new_chart();">
