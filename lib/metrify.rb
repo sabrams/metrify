@@ -45,24 +45,31 @@ module Metrify
     
     # currency
     def value_type(stat_name)
-      metrify_data['stats'][stat_name]['value_type']
+      config_val(stat_name, 'value_type')
     end
     
     # int
     def value_precision(stat_name)
-      metrify_data['stats'][stat_name]['precision']
+      config_val(stat_name, 'precision')
     end
     
     # if stat should also have % +/- over previous time period
     def show_variance(stat_name)
-      metrify_data['stats'][stat_name]['show_variance']
+      config_val(stat_name, 'show_variance')
     end    
+    
+    def display_name(stat_name)
+      config_val(stat_name, 'display_name')
+    end
+    
+    def config_val(stat_name, val)
+      metrify_data['stats'][stat_name] == nil ? nil : metrify_data['stats'][stat_name][val]
+    end
     
     def method_missing(method, *args, &block)
       stat_names.each do |name|
         if (name + NAME == method.to_s)
-          obj = metrify_data['stats'][name]
-          return obj['display_name']
+          return display_name(name)
         elsif (CALC + name == method.to_s)
           new_meth = method.to_s[CALC.length,method.to_s.length]
           raise MetrifyInclusionError, "Base class must implement method: #{new_meth}." if !self.class.respond_to?(new_meth) 

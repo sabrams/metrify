@@ -25,7 +25,7 @@ module MetrifyHelper
   
   def print_stat_value(stat, stat_name,  metrify, previous_stat = nil)
     val = stat.send(stat_name)
-    val = number_with_precision(val, :precision => metrify.value_precision(stat_name)) if (metrify.value_precision(stat_name))
+    val = number_with_precision(val, :precision => metrify.value_precision(stat_name)) if metrify.value_precision(stat_name)
     if metrify.value_type(stat_name) == "currency"
       str = number_to_currency(val) 
     else
