@@ -116,10 +116,6 @@ Example Controller:
     private 
     def metrified_class
       @metrified_class || @metrified_class = MetricsClass.new
-    end 
-
-    def set_classname
-      @classname || @classname = Dashboard.name.downcase
     end
 
   end
@@ -131,6 +127,33 @@ Example View for graph:
 
   </style>
   <%= render :partial => "metrify/graph" %>
+
+Depending on the jscript framework you are using, you will also want to define an new instance of Breakdown, defining the Ajax method appropriately:
+
+Prototype:
+  <script type="text/javascript" charset="utf-8">
+    window.breakdown = new Breakdown(function(url, complete_fn){
+
+      new Ajax.Request(url, {evalJSON : 'force', onComplete : function(text){	 	
+        complete_fn(text.responseJSON); 
+        }})
+    });
+
+    document.observe("dom:loaded", function(){window.breakdown.create_new_chart();});
+
+  </script>
+  
+Mootools:
+
+  <script type="text/javascript" charset="utf-8">
+    window.breakdown = new Breakdown(function(url, complete_fn){
+      new Request({url : url, onSuccess : function(text){
+        complete_fn(text);
+      }}).get();
+    });
+
+    window.addEvent('domready', function(){window.breakdown.create_new_chart();});
+  </script>
   
 Example View for chart:
 
