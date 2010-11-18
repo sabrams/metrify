@@ -53,10 +53,11 @@
       create_new_chart : function(){  
         var filters = this.get_filter_values();
         params = filters;
-        var url = "/<%= @classname %>/chart_data.json?" + params;
+        var url = '<%= url_for(:action => 'chart_data', :format => 'json') %>' + '&' + params;
         var self = this;
+        console.log("ajax function is " + ajax_fn);
         ajax_fn.apply(this, [url, function(response_text){
-          self.chart = null;
+          //self.chart = null;
           self.get_chart(eval(response_text));
         }]);
       }
