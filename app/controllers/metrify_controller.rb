@@ -1,6 +1,9 @@
 module MetrifyController
   
   def self.included(base)
+    base.class_eval do
+      before_filter :set_metrify_class
+    end
     base.extend ClassMethods
     base.send :include, InstanceMethods
     base.helper MetrifyHelper
@@ -8,16 +11,19 @@ module MetrifyController
   
   module InstanceMethods
    def index
-     @metrify = metrified_class
      setup_historical_stats
-     @stat_names = metrified_class.stat_names
+     @stat_names = @metrified_class.stat_names
      @historical_site_stats.reverse!
+   end
+   
+   def set_metrify_class
+     @metrified_class = metrify_model
    end
 
    def setup_historical_stats
      @unit = unit
      @number_of_stats = number_of_stats
-     @historical_site_stats = metrified_class.historical_values(Time.now.beginning_of_week, number_of_stats, unit)
+     @historical_site_stats = @metrified_class.historical_values(Time.now.beginning_of_week, number_of_stats, unit)
    end
    
    def number_of_stats
@@ -35,19 +41,18 @@ module MetrifyController
    end
    
    def parsed_stat_names
-     !params[:stat_names].blank? ? params[:stat_names].split(',') : metrified_class.stat_names
+     !params[:stat_names].blank? ? params[:stat_names].split(',') : @metrified_class.stat_names
   end
    
    # chart_data.json?filters[type][]=letters&filters[type][]=animals&filters[furriness][]=not_furry
    def chart_data
-    @metrify = metrified_class
-    @stat_names = metrified_class.stat_names(parsed_stat_names, params[:filters])
+    @stat_names = @metrified_class.stat_names(parsed_stat_names, params[:filters])
     @unit = params[:unit] || unit
 
     @number_of_stats = params[:number_of_stats] || number_of_stats
-    @historical_site_stats = metrified_class.historical_values(Time.now.beginning_of_week, number_of_stats, unit)
+    @historical_site_stats = @metrified_class.historical_values(Time.now.beginning_of_week, number_of_stats, unit)
 
-    json = @stat_names.map{|s| {:name => @template.pretty_col_name(s, @metrify), 
+    json = @stat_names.map{|s| {:name => @metrified_class.display_name(s), 
                                 :pointInterval => (1.send(@unit) * 1000), 
                                 :pointStart => (@number_of_stats.send(@unit).ago.to_i * 1000), 
                                 :data => @historical_site_stats.map{|h| h.send(s)}}}
@@ -55,7 +60,7 @@ module MetrifyController
     setup_historical_stats
     respond_to do |format|
       format.json {
-        render :layout => false , :json => @stat_names.map{|s| {:name => @template.pretty_col_name(s, @metrify), 
+        render :layout => false , :json => @stat_names.map{|s| {:name => @metrified_class.display_name(s), 
           :pointInterval => (1.send(@unit) * 1000), 
           :pointStart => (@number_of_stats.send(@unit).ago.to_i * 1000), 
           :data => @template.get_stat_arr(s, @historical_site_stats)}}.to_json
@@ -64,18 +69,19 @@ module MetrifyController
     
    end
    
+#   def set_metrify_model; end
+   
    private
    
    def prepare_for_graph
-     @metrify = metrified_class
      setup_historical_stats
-     set_classname
    end
    
   end
 
  
   module ClassMethods
+
   end
 end
 

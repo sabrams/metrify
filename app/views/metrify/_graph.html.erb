@@ -28,7 +28,7 @@
       },
       get_filter_values : function(){
         var paramStrings = ""; 
-        <% @metrify.filters.each_pair do |filter, subfilters| %>
+        <% @metrified_class.filters.each_pair do |filter, subfilters| %>
           <% subfilters.each_pair do |subfilter, attributes| %>
             var param = "<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>";
             e = document.getElementById(param);
@@ -69,7 +69,7 @@
 <% showDateRangeOptions = "" 
 showDateRangeOptions += "$(\'dateRangeOptions\').style.display = \'block\';\n" %>
 <div class="metrify_graph" id="stat_chart"></div>
-<% @metrify.filters.each_pair do |filter, subfilters| %>
+<% @metrified_class.filters.each_pair do |filter, subfilters| %>
 <div><br><%= filter %>
   <% subfilters.each_pair do |subfilter, attributes| %>
     <input type="checkbox" id="<%= 'filters[' + filter.to_s + '[' + subfilter.to_s + ']]' %>" name="<%= subfilter.to_s %>"  onClick="breakdown.create_new_chart();"/><%= subfilter.to_s %><br>

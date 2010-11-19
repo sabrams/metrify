@@ -1,14 +1,5 @@
 module MetrifyHelper
   
-  def pretty_col_name(name, metrify)
-    configured_name = metrify.send(name + "_name")
-    return configured_name if configured_name
-    s = ""
-    name = name.split('_')
-    name.each {|word| s << ' '<< word.capitalize}
-    s
-  end
-
   def get_stat_arr(stat, historical_stats = @historical_site_stats)
     stat_over_time = []
     historical_stats.each do |s|
@@ -19,19 +10,19 @@ module MetrifyHelper
     stat_over_time
   end
   
-  def sorted_stat_names(metrify)
-    metrify.sort_stat_names(@stat_names)
+  def sorted_stat_names
+    @metrified_class.sort_stat_names(@stat_names)
   end
   
-  def print_stat_value(stat, stat_name,  metrify, previous_stat = nil)
+  def print_stat_value(stat, stat_name, previous_stat = nil)  
     val = stat.send(stat_name)
-    val = number_with_precision(val, :precision => metrify.value_precision(stat_name)) if metrify.value_precision(stat_name)
-    if metrify.value_type(stat_name) == "currency"
+    val = number_with_precision(val, :precision => @metrified_class.value_precision(stat_name)) if @metrified_class.value_precision(stat_name)
+    if @metrified_class.value_type(stat_name) == "currency"
       str = number_to_currency(val) 
     else
       str = val.to_s
     end   
-    str += colorized_percent_diff(previous_stat.send(stat_name).to_f, stat.send(stat_name).to_f) if metrify.show_variance(stat_name) && previous_stat && previous_stat.send(stat_name) != 0 && stat.send(stat_name) != 0 && previous_stat.send(stat_name) != stat.send(stat_name)
+    str += colorized_percent_diff(previous_stat.send(stat_name).to_f, stat.send(stat_name).to_f) if @metrified_class.show_variance(stat_name) && previous_stat && previous_stat.send(stat_name) != 0 && stat.send(stat_name) != 0 && previous_stat.send(stat_name) != stat.send(stat_name)
     str
   end
   

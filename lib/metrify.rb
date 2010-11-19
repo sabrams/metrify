@@ -14,12 +14,19 @@ module Metrify
     raise MetrifyInclusionError, "The base class must be a descendent of active record." unless base.respond_to?(:descends_from_active_record?)
     base.class_eval do
       cattr_accessor :metrify_data
-      cattr_accessor :start_date
-      cattr_accessor :end_date
     end
     base.send :extend, ClassMethods
   end
 
+  module InstanceMethods
+    def method_missing(method, *args, &block)
+      self.class.stat_names.each do |name|
+        return stat_hash[name] if (name == method.to_s)
+      end
+      super
+    end
+  end
+      
   module ClassMethods
     
     def acts_as_metrify(file = self.name.underscore + '_metrify.yml', test = false)
@@ -30,13 +37,6 @@ module Metrify
       else
         self.metrify_data = YAML.load_file(File.join(RAILS_ROOT, 'config', file))
       end
-    end
-  end
-
-  module InstanceMethods
-      
-    def metrify_data
-      self.class.metrify_data
     end
     
     def filters
@@ -59,7 +59,12 @@ module Metrify
     end    
     
     def display_name(stat_name)
-      config_val(stat_name, 'display_name')
+      configured_name = config_val(stat_name, 'display_name')
+      return configured_name if configured_name
+      s = ""
+      name = stat_name.split('_')
+      name.each {|word| s << ' '<< word.capitalize}
+      s
     end
     
     def config_val(stat_name, val)
@@ -72,10 +77,8 @@ module Metrify
           return display_name(name)
         elsif (CALC + name == method.to_s)
           new_meth = method.to_s[CALC.length,method.to_s.length]
-          raise MetrifyInclusionError, "Base class must implement method: #{new_meth}." if !self.class.respond_to?(new_meth) 
-          return self.class.send(new_meth, *args, &block)
-        elsif (name == method.to_s)
-          return stat_hash[method.to_s]
+          raise MetrifyInclusionError, "Base class must implement method: #{new_meth}." if !self.respond_to?(new_meth) 
+          return self.send(new_meth, *args, &block)
         end
       end
       super
@@ -140,13 +143,13 @@ module Metrify
     end
     
     def lookup(end_date = Time.now.midnight, interval = 1)
-      self.class.find(:first, :conditions => {:finish_date => end_date, :number_of_days => interval})
+      find(:first, :conditions => {:finish_date => end_date, :number_of_days => interval})
     end
     
     def generate(end_date = Time.now.midnight, number_of_days = 1)
-      s = self.class.find_or_create_by_finish_date_and_number_of_days(:finish_date => end_date, :number_of_days => number_of_days)
-      self.start_date = end_date - number_of_days.days
-      self.end_date = end_date
+      s = find_or_create_by_finish_date_and_number_of_days(:finish_date => end_date, :number_of_days => number_of_days)
+      start_date = end_date - number_of_days.days
+      end_date = end_date
       s.stat_hash = {}
       stat_names.each do |stat_name|
 #        raise MetrifyInclusionError, "Base class must implement method: #{stat_name}." unless self.class.respond_to?(stat_name)
@@ -157,5 +160,10 @@ module Metrify
       s.save
       s
     end
+  end
+
+  module InstanceMethods
+      
+    
   end
 end
