@@ -112,12 +112,10 @@ Example Controller:
 
   class DashboardController < ApplicationController
     include MetrifyController
-
-    private 
-    def metrified_class
-      @metrified_class || @metrified_class = MetricsClass.new
+  
+    def metrify_model
+      Dashboard     # Dashboard is the class using the Metrify module
     end
-
   end
   
 Example View for graph:
