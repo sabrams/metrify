@@ -11,7 +11,7 @@ module MetrifyHelper
   end
   
   def sorted_stat_names
-    @metrified_class.sort_stat_names(@stat_names)
+    @metrified_class.sorted_stat_names(@stat_names)
   end
   
   def print_stat_value(stat, stat_name, previous_stat = nil)  

@@ -88,7 +88,7 @@ module Metrify
       metrify_data['stat_order']
     end
     
-    def sort_stat_names(stat_names)
+    def sorted_stat_names(stat_names)
       if preferred_stat_order
         final_list = []
         preferred_stat_order.each do |o_stat|
@@ -130,6 +130,7 @@ module Metrify
 
     # returns an array of defined stats, each containing an array of values over time
     def historical_values(end_date, history_length, unit = DEFAULT_UNIT)
+      end_date = end_date.midnight
       unit = :day if (1.send(unit) / 1.days) < 1
       days = 1.send(unit) / 1.days
       (0..(history_length-1)).map{|i| end_date - i.send(unit)}.reverse.map do |day|
@@ -137,6 +138,7 @@ module Metrify
       end
     end
     
+    private
     def find_stats_for(end_date, days)
        s = lookup(end_date, days)
        s ||= generate(end_date, days)
