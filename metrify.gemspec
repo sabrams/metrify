@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
      "app/views/metrify/_time_links.erb",
      "lib/metrify.rb",
      "spec/database.yml",
-     "spec/debug.log",
      "spec/metrify.yml",
      "spec/metrify_spec.rb",
      "spec/schema.rb",

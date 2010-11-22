@@ -129,39 +129,52 @@ module Metrify
     end
 
     # returns an array of defined stats, each containing an array of values over time
-    def historical_values(end_date, history_length, unit = DEFAULT_UNIT)
-      end_date = end_date.midnight
-      unit = :day if (1.send(unit) / 1.days) < 1
-      days = 1.send(unit) / 1.days
-      (0..(history_length-1)).map{|i| end_date - i.send(unit)}.reverse.map do |day|
-        find_stats_for(day, days)
+    def historical_values(end_time, history_length, unit = DEFAULT_UNIT)
+      unit = :hour if (1.send(unit) / 1.hours) < 1
+      finish_time = unit == :hour ? floor_hour(end_time) : end_time.midnight
+      hours = 1.send(unit) / 1.hours
+      (0..(history_length-1)).map{|i| finish_time - i.send(unit)}.reverse.map do |hour|
+        find_stats_for(hour, hours)
       end
     end
     
     private
-    def find_stats_for(end_date, days)
-       s = lookup(end_date, days)
-       s ||= generate(end_date, days)
+    def find_stats_for(end_time, hours)
+       s = lookup(end_time, hours)
+       s ||= generate(end_time, hours)
     end
     
-    def lookup(end_date = Time.now.midnight, interval = 1)
-      find(:first, :conditions => {:finish_date => end_date, :number_of_days => interval})
+    def lookup(end_time = floor_hour(Time.zone.now), interval = 1)
+      find(:first, :conditions => {:finish_time => end_time, :number_of_hours => interval})
     end
     
-    def generate(end_date = Time.now.midnight, number_of_days = 1)
-      s = find_or_create_by_finish_date_and_number_of_days(:finish_date => end_date, :number_of_days => number_of_days)
-      start_date = end_date - number_of_days.days
-      end_date = end_date
+    def generate(end_time = floor_hour(Time.zone.now), number_of_hours = 1)
+      s = find_or_create_by_finish_time_and_number_of_hours(:finish_time => end_time, :number_of_hours => number_of_hours)
+      start_time = end_time - number_of_hours.hours
+      end_time = end_time
       s.stat_hash = {}
       stat_names.each do |stat_name|
 #        raise MetrifyInclusionError, "Base class must implement method: #{stat_name}." unless self.class.respond_to?(stat_name)
-        s.stat_hash[stat_name] = self.send(CALC + stat_name, end_date-number_of_days.days, end_date) 
+        s.stat_hash[stat_name] = self.send(CALC + stat_name, end_time-number_of_hours.hours, end_time) 
       end
 
-      s.finish_date = end_date
+      s.finish_time = end_time
       s.save
       s
     end
+    
+    # Instead of extending Time...
+    #class Time
+    # def floor_hour
+    # Time.at((self.to_f / 3600).floor * 3600)
+    # end
+    #end
+    # using private method....
+    def floor_hour(time)
+      (time.to_f/3600).floor * 3600
+    end
+      
+    
   end
 
   module InstanceMethods

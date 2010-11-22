@@ -23,11 +23,18 @@ module MetrifyController
    def setup_historical_stats
      @unit = unit
      @number_of_stats = number_of_stats
-     @historical_site_stats = @metrified_class.historical_values(Time.now.beginning_of_week, number_of_stats, unit)
+     @historical_site_stats = @metrified_class.historical_values(Time.zone.now.beginning_of_week, number_of_stats, unit)
    end
    
    def number_of_stats
-     unit == :week ? 52 : (unit == :month ? 12 : 30)
+
+    number = case unit.to_sym
+      when :month then 12
+      when :week then 52
+      when :day then 30
+      else 48 #hour
+    end
+    
    end
 
    def unit
@@ -50,7 +57,7 @@ module MetrifyController
     @unit = params[:unit] || unit
 
     @number_of_stats = params[:number_of_stats] || number_of_stats
-    @historical_site_stats = @metrified_class.historical_values(Time.now.beginning_of_week, number_of_stats, unit)
+    @historical_site_stats = @metrified_class.historical_values(Time.zone.now.beginning_of_week, number_of_stats, unit)
 
     json = @stat_names.map{|s| {:name => @metrified_class.display_name(s), 
                                 :pointInterval => (1.send(@unit) * 1000), 

@@ -17,7 +17,7 @@
   <tbody>
     <% @historical_site_stats.each do |stat| %>
       <tr>
-        <td><%= stat.finish_date %></td>
+        <td><%= stat.finish_time %></td>
         <% sorted_stat_names.each do |s| %>
           <% idx = @historical_site_stats.index(stat); last = @historical_site_stats.last == stat %>
         <td><%= print_stat_value(stat, s, last ? nil : @historical_site_stats[idx+1]) %></td>

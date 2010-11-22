@@ -65,7 +65,7 @@ Example Class, implementing calculation methods for metrics defined in YML file:
     acts_as_metrify 
 
     class << self
-      def element_a_count(start_date, end_date)
+      def element_a_count(start_date, end_time)
         # Code calculating number (probably a SQL query using start and end dates) 
       end
 
@@ -77,8 +77,8 @@ Example Class, implementing calculation methods for metrics defined in YML file:
 The class will need the minimal columns defined in this example migration:
 
   create_table :metrics_class, :force => true do |t|
-    t.date :finish_date
-    t.integer :number_of_days
+    t.datetime :finish_time
+    t.integer :number_of_hours
     t.string :stat_hash
   end
   
@@ -86,9 +86,9 @@ This will grant the following functionality to the MetricsClass defined above:
 
   MetrifiedClass.element_a_count_name # => "Element A Count"
 
-  example_finish_date = Time.now.midnight
+  example_finish_time = Time.now.midnight
   number_of_days = 7
-  historical_values = MetrifiedClass.historical_values(example_finish_date, 10, :day) # => returns array of 10 aggregations, each over 1 day, older values listed first, ended at the most recent aggregation date (example_finish_date). (:day, :month options)
+  historical_values = MetrifiedClass.historical_values(example_finish_time, 10, :day) # => returns array of 10 aggregations, each over 1 day, older values listed first, ended at the most recent aggregation date (example_finish_time). (:day, :month options)
   historical_values[0].element_a_count # => generated for the given time frame using the 'element_a_count' method implemented in MetricsClass
   
   MetrifiedClass.stat_names # => stat names available, provided in YML file

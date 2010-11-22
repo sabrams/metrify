@@ -14,37 +14,37 @@ class InvalidMetric < ActiveRecord::Base
   acts_as_metrify 'spec/metrify.yml', true
 
   class << self
-    def element_a_count(start_date, end_date)
-      return 204 if (start_date == (DATE_1-1.day) && end_date == DATE_1)
-      return 23 if (start_date == (DATE_1-7.days) && end_date == DATE_1)
+    def element_a_count(start_date, end_time)
+      return 204 if (start_date == (DATE_1-1.day) && end_time == DATE_1)
+      return 23 if (start_date == (DATE_1-7.days) && end_time == DATE_1)
       5 
     end
 
-    def element_c_count(start_date, end_date)
+    def element_c_count(start_date, end_time)
       15
     end
     
-    def element_1_count(start_date, end_date)
+    def element_1_count(start_date, end_time)
       15
     end
     
-    def element_2_count(start_date, end_date)
+    def element_2_count(start_date, end_time)
       15
     end
     
-    def element_3_count(start_date, end_date)
+    def element_3_count(start_date, end_time)
       15
     end
     
-    def element_4_count(start_date, end_date)
+    def element_4_count(start_date, end_time)
       15
     end
     
-    def element_cat_count(start_date, end_date)
+    def element_cat_count(start_date, end_time)
       15
     end
     
-    def element_dog_count(start_date, end_date)
+    def element_dog_count(start_date, end_time)
       15
     end
   end
@@ -52,7 +52,7 @@ end
 
 class Metric < InvalidMetric
   class << self
-    def element_b_count(start_date, end_date)
+    def element_b_count(start_date, end_time)
       5
     end
   end
@@ -82,13 +82,13 @@ describe "Metrify" do
     @historical_site_stats = @site_stat.historical_values(DATE_1, RANGE_1, :day)
     @historical_site_stats.size.should eql 100
     (0..RANGE_1-1).each do |idx|
-      @historical_site_stats[idx].finish_date.should eql DATE_1-(RANGE_1-1-idx)
+      @historical_site_stats[idx].finish_time.should eql DATE_1-(RANGE_1-1-idx)
       @historical_site_stats[idx].number_of_days.should eql 1
     end
   
     @historical_site_stats = @site_stat.historical_values(DATE_1, RANGE_2, :month)
     (0..RANGE_2-1).each do |idx|
-      @historical_site_stats[idx].finish_date.should eql DATE_1-(RANGE_2-1-idx).months
+      @historical_site_stats[idx].finish_time.should eql DATE_1-(RANGE_2-1-idx).months
       @historical_site_stats[idx].number_of_days.should eql 30
     end    
   end
