@@ -87,7 +87,7 @@ This will grant the following functionality to the MetricsClass defined above:
   MetrifiedClass.element_a_count_name # => "Element A Count"
 
   example_finish_time = Time.now.midnight
-  number_of_days = 7
+  number_of_hours = 7*24
   historical_values = MetrifiedClass.historical_values(example_finish_time, 10, :day) # => returns array of 10 aggregations, each over 1 day, older values listed first, ended at the most recent aggregation date (example_finish_time). (:day, :month options)
   historical_values[0].element_a_count # => generated for the given time frame using the 'element_a_count' method implemented in MetricsClass
   
