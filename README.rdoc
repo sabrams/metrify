@@ -106,6 +106,7 @@ This will grant the following functionality to the MetricsClass defined above:
   
   
   MetrifiedClass.sorted_stat_names(['element_dog_count', 'element_cat_count', 'element_b_count']) # => ['element_b_count', 'element_dog_count', 'element_cat_count'] ordered as defined by stat_order in yml, alphabetical if not configured
+
 == Using with Highcharts for instant views
 
 Assuming your application is configured to use Highcharts, optional controller, view, and helper components are included to provide charts with filters. To use:
@@ -171,6 +172,23 @@ Example View for chart:
     .metrify_chart td {padding:5px;}
   </style>
   <%= render :partial => "metrify/chart" %>
+
+== Using Mailer View
+
+A simple view for displaying multiple metrics charts in a email is also available. To use, specify the 'metrified' class and create a hash of charts you would like delivered, specifying the chart name and the chart:
+
+  @metrified_class = MetrifiedClass
+
+  @charts = {
+    "Hourly", MetrifiedClass.historical_values(end_time, 168, :hour),
+    "Daily", MetrifiedClass.historical_values(end_time, 7, :day),
+    "Weekly", MetrifiedClass.historical_values(end_time, 52, :week),
+    "Monthly", MetrifiedClass.historical_values(end_time, 12, :month)
+  }
+
+Then, include the partial in your Mailer's view:
+
+<%= render :partial => 'metrify/mailer_charts_summary' %>
 
 == Note on Patches/Pull Requests
  

@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Stephen Abrams"]
-  s.date = %q{2010-11-22}
+  s.date = %q{2010-12-01}
   s.description = %q{Framework to aggregate and display data over time. Assumes highcharts installation.}
   s.email = %q{abrams.stephen@gmail.com}
   s.extra_rdoc_files = [
@@ -22,6 +22,8 @@ Gem::Specification.new do |s|
      "app/helpers/metrify_helper.rb",
      "app/views/metrify/_chart.html.erb",
      "app/views/metrify/_graph.html.erb",
+     "app/views/metrify/_mailer_charts_summary.html.erb",
+     "app/views/metrify/_mailer_single_chart.html.erb",
      "app/views/metrify/_time_links.erb",
      "lib/metrify.rb",
      "spec/database.yml",

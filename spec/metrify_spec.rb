@@ -102,6 +102,14 @@ describe "Metrify" do
     historical_site_stats[0].element_a_count.should eql 23  
   end
   
+  it "should fail inclusion if class does not extend ActiveRecord" do
+    lambda {  
+      class NotActiveRecordSubclass
+        include Metrify
+      end    
+    }.should raise_error(Metrify::MetrifyInclusionError)  
+  end
+  
   it "should return filters with hash of hashes" do
     Metric.filters['type'].keys.to_set.should eql ['numbers', 'letters', 'animals'].to_set
     Metric.filters['type']['numbers']['set'].to_set.should eql ['element_1_count', 'element_2_count', 'element_3_count', 'element_4_count'].to_set

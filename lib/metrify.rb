@@ -88,7 +88,7 @@ module Metrify
       metrify_data['stat_order']
     end
     
-    def sorted_stat_names(stat_names)
+    def sorted_stat_names(stat_names = stat_names)
       if preferred_stat_order
         final_list = []
         preferred_stat_order.each do |o_stat|
@@ -138,11 +138,13 @@ module Metrify
       end
     end
     
-    private
     def find_stats_for(end_time, hours)
-       s = lookup(end_time, hours)
-       s ||= generate(end_time, hours)
+      end_time = floor_hour(end_time)
+      s = lookup(end_time, hours)
+      s ||= generate(end_time, hours)
     end
+    
+    private
     
     def lookup(end_time = floor_hour(Time.zone.now), interval = 1)
       find(:first, :conditions => {:finish_time => end_time, :number_of_hours => interval})
@@ -151,7 +153,6 @@ module Metrify
     def generate(end_time = floor_hour(Time.zone.now), number_of_hours = 1)
       s = find_or_create_by_finish_time_and_number_of_hours(:finish_time => end_time, :number_of_hours => number_of_hours)
       start_time = end_time - number_of_hours.hours
-      end_time = end_time
       s.stat_hash = {}
       stat_names.each do |stat_name|
 #        raise MetrifyInclusionError, "Base class must implement method: #{stat_name}." unless self.class.respond_to?(stat_name)
@@ -171,7 +172,7 @@ module Metrify
     #end
     # using private method....
     def floor_hour(time)
-      (time.to_f/3600).floor * 3600
+      (Time.zone || Time).at((time.to_f/3600).floor * 3600)
     end
       
     
