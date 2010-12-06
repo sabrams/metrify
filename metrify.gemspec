@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Stephen Abrams"]
-  s.date = %q{2010-12-01}
+  s.date = %q{2010-12-05}
   s.description = %q{Framework to aggregate and display data over time. Assumes highcharts installation.}
   s.email = %q{abrams.stephen@gmail.com}
   s.extra_rdoc_files = [
@@ -18,8 +18,8 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     "README.rdoc",
-     "app/controllers/metrify_controller.rb",
-     "app/helpers/metrify_helper.rb",
+     "app/controllers/metrify/metrify_controller.rb",
+     "app/helpers/metrify/metrify_helper.rb",
      "app/views/metrify/_chart.html.erb",
      "app/views/metrify/_graph.html.erb",
      "app/views/metrify/_mailer_charts_summary.html.erb",
@@ -50,12 +50,12 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_development_dependency(%q<rspec>, [">= 2.0"])
     else
-      s.add_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_dependency(%q<rspec>, [">= 2.0"])
     end
   else
-    s.add_dependency(%q<rspec>, [">= 1.2.9"])
+    s.add_dependency(%q<rspec>, [">= 2.0"])
   end
 end
 

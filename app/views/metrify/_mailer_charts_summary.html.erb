@@ -1,0 +1,3 @@
+<% @charts.each_pair do |name, chart| %>
+  <%= render :partial => 'metrify/mailer_single_chart', :locals => {:chart_name => name, :metrified_class => @metrified_class, :chart => chart}%>
+<% end %>

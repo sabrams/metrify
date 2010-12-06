@@ -1,7 +1,13 @@
 require 'yaml'
+require 'metrify'
+require 'rails' if Rails::VERSION::MAJOR == 3
 
 module Metrify
 
+  if Rails::VERSION::MAJOR == 3
+    class Engine < Rails::Engine
+    end
+  end
   
   DEFAULT_UNIT = :day 
   CALC = "calc_"

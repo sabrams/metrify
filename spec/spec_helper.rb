@@ -1,8 +1,15 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'metrify'
-require 'spec'
-require 'spec/autorun'
+if Rails::VERSION::MAJOR == 3
+  require 'rspec'
+  require 'rspec/autorun'
+
+else
+  require 'spec'
+  require 'spec/autorun'
+end  
+
 require 'rubygems'
 require 'active_record'
 
